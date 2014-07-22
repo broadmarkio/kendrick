@@ -10,6 +10,8 @@ interface in order to perform the following functionality that is expected out o
 =>Give functionality to allow for creation and deletion of file from external service (or internal if implemented by server)
 '''
 
+import pyimgur
+
 class IConnection(object):
     
     def __init__(self):
@@ -20,10 +22,27 @@ class IConnection(object):
         
         raise NotImplementedError
     
-    def addImage(self):
+    def changeImage(self):
         
         raise NotImplementedError
     
-    def removeImage(self):
+    
+class ImgurConnection(IConnection):
+    
+    def __init__(self, api_key):
         
-        raise NotImplementedError
+        self.api_key = api_key
+        
+        #Map Web-address to imgur url
+        self.url_mapping = {}
+    
+    def getURL(self, webpage):
+        
+        return self.url_mapping[webpage.url]
+    
+    def changeImage(self, image):
+        
+        imgur = pyimgur.Imgur(self.api_key)
+        uploaded_img = imgur.upload_image(image.path, title=image.title)
+        self.url_mapping[image.url] = uploaded_img.link
+        return uploaded_img.link
