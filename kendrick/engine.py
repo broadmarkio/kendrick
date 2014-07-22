@@ -26,7 +26,7 @@ class KendrickEngine(object):
         while True:
             if datetime.now() >= self.s_time + self.interval:
                 self.capture_all()
-                #Update s_time
+                self.s_time += self.interval
     
     def capture_all(self):
         

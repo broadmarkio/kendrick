@@ -1,20 +1,14 @@
 #!/usr/local/bin/python2.7
 # encoding: utf-8
 '''
-kendrick.kendrick -- shortdesc
+Kendrick -- Kendrick is a server and library implementation that allows for users to capture
+screenshots of their websites and publish them through a URL.
 
-kendrick.kendrick is a description
+@author:     Jacob Bennett
 
-It defines classes_and_methods
+@copyright:  2014 Broadmark.io. All rights reserved.
 
-@author:     user_name
-
-@copyright:  2014 organization_name. All rights reserved.
-
-@license:    license
-
-@contact:    user_email
-@deffield    updated: Updated
+@license:    GPLv2
 '''
 
 import sys
@@ -58,13 +52,9 @@ def main(argv=None): # IGNORE:C0111
     program_license = '''%s
 
   Created by user_name on %s.
-  Copyright 2014 organization_name. All rights reserved.
+  Copyright 2014 broadmark.io. All rights reserved.
 
-  Licensed under the Apache License 2.0
-  http://www.apache.org/licenses/LICENSE-2.0
-
-  Distributed on an "AS IS" basis without warranties
-  or conditions of any kind, either express or implied.
+  Licensed under the GNU GPL License 2
 
 USAGE
 ''' % (program_shortdesc, str(__date__))
