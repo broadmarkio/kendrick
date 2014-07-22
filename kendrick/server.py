@@ -11,8 +11,12 @@ by the connection.
 import tornado.ioloop
 import tornado.web
 import threading
+import urllib
+from lib.rwlock import RWLock
+from requests.packages import urllib3
 
-server_lock = threading.Lock()
+server_lock = RWLock()
+mapping = {}
 
 class ImageProxyHandler(tornado.web.RequestHandler):
     
@@ -21,16 +25,17 @@ class ImageProxyHandler(tornado.web.RequestHandler):
         connection = self.get_argument("c")
         title = self.get_argument("t")
         
-        self.write(chunk)
+        server_lock.reader_acquire()
+        dat_arr = mapping[title]
+        server_lock.reader_release()
         
-        with server_lock:
+        html_file = urllib.urlopen(dat_arr[connection])
+        self.write(html_file)
+        self.flush()
             
-
 class KendrickServer(tornado.web.Application):
     
     def __init__(self):
-        
-        self.mapping = {}
         
         super.__init__([
                         (r"/image", ImageProxyHandler)
@@ -38,17 +43,18 @@ class KendrickServer(tornado.web.Application):
         
     def addToMapping(self, webpage):
         
-        self.mapping[webpage.title] = 0
+        mapping[webpage.title] = 0
             
     def removeFromMapping(self, webpage):
         
-        del self.mapping[webpage.title]
+        del mapping[webpage.title]
     
     def updateMapping(self, webpage, urls):
         
-        with server_lock:
-            self.mapping[webpage.title] = urls
+        server_lock.writer_acquire()
+        mapping[webpage.title] = urls
+        server_lock.writer_release()
             
     def start(self):
-        
-        pass
+        self.listen(8888)
+        tornado.ioloop.IOLoop.instance().start()
