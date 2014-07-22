@@ -10,14 +10,45 @@ by the connection.
 
 import tornado.ioloop
 import tornado.web
+import threading
 
-class KendrickHandler(tornado.web.RequestHandler):
+server_lock = threading.Lock()
+
+class ImageProxyHandler(tornado.web.RequestHandler):
     
-    #Add some shit here...
-    pass
+    def get(self):
+        
+        connection = self.get_argument("c")
+        title = self.get_argument("t")
+        
+        self.write(chunk)
+        
+        with server_lock:
+            
 
 class KendrickServer(tornado.web.Application):
     
-    def __init__(self, handler_array):
+    def __init__(self):
         
-        super.__init__(handler_array)
+        self.mapping = {}
+        
+        super.__init__([
+                        (r"/image", ImageProxyHandler)
+                        ])
+        
+    def addToMapping(self, webpage):
+        
+        self.mapping[webpage.title] = 0
+            
+    def removeFromMapping(self, webpage):
+        
+        del self.mapping[webpage.title]
+    
+    def updateMapping(self, webpage, urls):
+        
+        with server_lock:
+            self.mapping[webpage.title] = urls
+            
+    def start(self):
+        
+        pass
